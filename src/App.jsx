@@ -8,7 +8,7 @@ import CTASection from './components/CTASection';
 import Footer from './components/Footer';
 import WhatsAppButton from './components/WhatsAppButton';
 
-const WHATSAPP_NUMBER = "5548984135076";
+const WHATSAPP_NUMBER = "5548984941156";
 
 function App() {
   return (
