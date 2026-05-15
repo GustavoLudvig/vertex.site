@@ -1,5 +1,6 @@
-import React from 'react';
-import { motion } from 'framer-motion';
+import { useEffect, useRef } from 'react';
+import gsap from 'gsap';
+import MagneticButton from './MagneticButton';
 
 const WA_NUMBER = "5548984941156";
 const WA_MESSAGE = encodeURIComponent("Olá! Quero minha estratégia digital agora. Pode me ajudar?");
@@ -10,73 +11,155 @@ const WhatsAppIcon = () => (
   </svg>
 );
 
+// Divide o texto em <span class="char"> para animar letra por letra
+const SplitTextChars = ({ text, className = '', startDelay = 0 }) => {
+  const words = text.split(' ');
+  let charIndex = 0;
+  return (
+    <span className={className} style={{ perspective: '600px', display: 'inline-block' }}>
+      {words.map((word, wIdx) => (
+        <span key={wIdx} className="inline-block whitespace-nowrap">
+          {word.split('').map((char, cIdx) => (
+            <span
+              key={cIdx}
+              className="char inline-block"
+              style={{ willChange: 'transform, opacity' }}
+              data-delay={startDelay + charIndex++ * 0.035}
+            >
+              {char}
+            </span>
+          ))}
+          {wIdx < words.length - 1 && <span className="inline-block">&nbsp;</span>}
+        </span>
+      ))}
+    </span>
+  );
+};
+
 const Hero = () => {
+  const eyebrowRef = useRef(null);
+  const titleRef = useRef(null);
+  const subRef = useRef(null);
+  const ctaRef = useRef(null);
+  const noteRef = useRef(null);
+
+  useEffect(() => {
+    const chars = titleRef.current?.querySelectorAll('.char') || [];
+
+    const tl = gsap.timeline({ defaults: { ease: 'power4.out' } });
+
+    tl.fromTo(
+      eyebrowRef.current,
+      { y: 30, opacity: 0 },
+      { y: 0, opacity: 1, duration: 1 },
+      0.1
+    )
+      .fromTo(
+        chars,
+        { y: 180, opacity: 0, rotateX: -45 },
+        { y: 0, opacity: 1, rotateX: 0, duration: 1.4, stagger: 0.025 },
+        0.3
+      )
+      .fromTo(
+        subRef.current,
+        { y: 40, opacity: 0 },
+        { y: 0, opacity: 1, duration: 1.1 },
+        0.9
+      )
+      .fromTo(
+        ctaRef.current,
+        { y: 30, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.9 },
+        1.1
+      )
+      .fromTo(
+        noteRef.current,
+        { opacity: 0 },
+        { opacity: 1, duration: 0.8 },
+        1.4
+      );
+
+    return () => tl.kill();
+  }, []);
+
   return (
     <section
-      className="relative min-h-[100dvh] flex items-center justify-center bg-cover bg-center"
+      className="relative min-h-[100dvh] flex items-center justify-center bg-cover bg-center overflow-hidden"
       style={{ backgroundImage: `url('/Vertex-banner.png')` }}
     >
-      {/* Overlay */}
-      <div className="absolute inset-0 bg-black/55"></div>
+      {/* Overlay com gradiente cinematográfico */}
+      <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/55 to-black/80"></div>
 
-      {/* Content — pt-24 garante que não fique atrás do header fixo no mobile */}
-      <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center pt-24 pb-8">
-        <motion.p
-          className="section-label mb-6"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
+      {/* Brilho dourado sutil no centro */}
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(201,168,76,0.08)_0%,transparent_60%)] pointer-events-none"></div>
+
+      <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center pt-24 pb-8">
+        <p
+          ref={eyebrowRef}
+          className="text-[#C9A84C] uppercase text-xs md:text-sm tracking-[0.3em] font-semibold mb-8 opacity-0"
         >
           ESTRATÉGIA DIGITAL DE ALTO IMPACTO
-        </motion.p>
-        <motion.h1
-          className="text-5xl md:text-6xl font-bold mb-6 leading-tight"
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.2 }}
+        </p>
+
+        <h1
+          ref={titleRef}
+          className="text-4xl sm:text-5xl md:text-7xl font-bold mb-8 leading-[1.1] tracking-tight"
         >
-          Sua empresa não precisa de mais um site.<br />
-          Precisa de uma{' '}
-          <span className="bg-gradient-to-r from-[#C9A84C] to-[#E5C76B] bg-clip-text text-transparent">
-            estratégia que vende
+          <span className="block mb-1 sm:mb-2">
+            <SplitTextChars text="Sua empresa não precisa" />
           </span>
-          .
-        </motion.h1>
-        <motion.p
-          className="section-subtitle mb-10 max-w-2xl mx-auto"
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.4 }}
+          <span className="block mb-1 sm:mb-2">
+            <SplitTextChars text="de mais um site." />
+          </span>
+          <span className="block">
+            <SplitTextChars text="Precisa de uma" />
+          </span>
+          <span className="block italic text-[#C9A84C]">
+            <SplitTextChars text="estratégia que vende." />
+          </span>
+        </h1>
+
+        <p
+          ref={subRef}
+          className="text-[#B0B0B0] text-base md:text-lg leading-relaxed mb-10 max-w-2xl mx-auto opacity-0"
         >
           A Vertex cria sites, aplicativos e campanhas que trabalham 24h por dia para atrair, converter e fidelizar os clientes certos para o seu negócio.
-        </motion.p>
-        <motion.div
-          className="flex flex-col sm:flex-row gap-4 justify-center"
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.6 }}
+        </p>
+
+        <div
+          ref={ctaRef}
+          className="flex flex-col sm:flex-row gap-4 justify-center items-center opacity-0"
         >
-          <a
-            href={`https://wa.me/${WA_NUMBER}?text=${WA_MESSAGE}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="btn-whatsapp"
-          >
-            <WhatsAppIcon />
-            Quero minha estratégia agora
-          </a>
-          <a href="#methodology" className="btn-secondary text-center">
-            Como funciona?
-          </a>
-        </motion.div>
-        <motion.p
-          className="text-white/50 text-sm mt-4"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.8, delay: 0.9 }}
+          <MagneticButton strength={0.3}>
+            <a
+              href={`https://wa.me/${WA_NUMBER}?text=${WA_MESSAGE}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn-whatsapp"
+            >
+              <WhatsAppIcon />
+              Quero minha estratégia agora
+            </a>
+          </MagneticButton>
+          <MagneticButton strength={0.3}>
+            <a href="#methodology" className="btn-secondary text-center">
+              Como funciona?
+            </a>
+          </MagneticButton>
+        </div>
+
+        <p
+          ref={noteRef}
+          className="text-white/50 text-sm mt-6 opacity-0"
         >
           Atendimento humano • Resposta em minutos
-        </motion.p>
+        </p>
+      </div>
+
+      {/* Scroll indicator */}
+      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 hidden md:flex flex-col items-center gap-2 opacity-50">
+        <span className="text-[10px] uppercase tracking-widest text-white/60">Role</span>
+        <div className="w-px h-12 bg-gradient-to-b from-[#C9A84C] to-transparent"></div>
       </div>
     </section>
   );

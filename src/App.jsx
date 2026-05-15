@@ -13,15 +13,20 @@ import Services from './components/Services';
 import CTASection from './components/CTASection';
 import Footer from './components/Footer';
 import WhatsAppButton from './components/WhatsAppButton';
+import ServicesMarquee from './components/ServicesMarquee';
 import AdsLandingPage from './pages/AdsLandingPage';
+import useLenis from './hooks/useLenis';
 
 const WHATSAPP_NUMBER = "5548984941156";
 
 function MainSite() {
+  useLenis();
+
   return (
     <div className="min-h-screen bg-[#0a0a0a] text-[#FFFFFF]">
       <Header />
       <Hero />
+      <ServicesMarquee />
       <VideoSection />
       <ValueProps />
       <PortfolioSection />
