@@ -13,7 +13,6 @@ import Services from './components/Services';
 import CTASection from './components/CTASection';
 import Footer from './components/Footer';
 import WhatsAppButton from './components/WhatsAppButton';
-import ScrollVelocity from './components/ScrollVelocity';
 import AdsLandingPage from './pages/AdsLandingPage';
 import useLenis from './hooks/useLenis';
 
@@ -26,10 +25,9 @@ function MainSite() {
     <div className="min-h-screen bg-[#0a0a0a] text-[#FFFFFF]">
       <Header />
       <Hero />
-      <ScrollVelocity />
       <VideoSection />
-      <ValueProps />
       <PortfolioSection />
+      <ValueProps />
       <HandcraftedSection />
       <GoogleStrategySection />
       <FacebookStrategySection />

@@ -1,7 +1,6 @@
 import { useEffect, useRef } from 'react';
 import gsap from 'gsap';
 import Aurora from './Aurora';
-import TextPressure from './TextPressure';
 import EncryptButton from './EncryptButton';
 
 const WA_NUMBER = '5548984941156';
@@ -15,51 +14,89 @@ const WhatsAppIcon = () => (
   </svg>
 );
 
+// Divide texto em <span class="word"> + <span class="char"> pra animar letra por letra
+const SplitWords = ({ text, className = '' }) => {
+  const words = text.split(' ');
+  return (
+    <span className={className}>
+      {words.map((word, wIdx) => (
+        <span
+          key={wIdx}
+          className="inline-block whitespace-nowrap mr-[0.25em] overflow-hidden align-baseline"
+          style={{ paddingBottom: '0.15em' }}
+        >
+          {word.split('').map((char, cIdx) => (
+            <span
+              key={cIdx}
+              className="char inline-block"
+              style={{ willChange: 'transform, opacity' }}
+            >
+              {char}
+            </span>
+          ))}
+        </span>
+      ))}
+    </span>
+  );
+};
+
 export default function Hero() {
   const eyebrowRef = useRef(null);
+  const titleRef = useRef(null);
   const subRef = useRef(null);
   const ctaRef = useRef(null);
   const noteRef = useRef(null);
   const lineRef = useRef(null);
 
   useEffect(() => {
-    const tl = gsap.timeline({ defaults: { ease: 'power4.out' } });
+    const chars = titleRef.current?.querySelectorAll('.char') || [];
+    const tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
+
     tl.fromTo(
       eyebrowRef.current,
-      { y: 30, opacity: 0 },
-      { y: 0, opacity: 1, duration: 1 },
+      { y: 24, opacity: 0 },
+      { y: 0, opacity: 1, duration: 0.9 },
       0.1
     )
       .fromTo(
+        chars,
+        { y: 120, opacity: 0 },
+        { y: 0, opacity: 1, duration: 1.1, stagger: 0.018 },
+        0.3
+      )
+      .fromTo(
         lineRef.current,
         { scaleX: 0, opacity: 0 },
-        { scaleX: 1, opacity: 1, duration: 1.2 },
-        0.4
+        { scaleX: 1, opacity: 1, duration: 1.0 },
+        1.1
       )
       .fromTo(
         subRef.current,
-        { y: 40, opacity: 0 },
-        { y: 0, opacity: 1, duration: 1.1 },
-        1.0
-      )
-      .fromTo(
-        ctaRef.current,
         { y: 30, opacity: 0 },
         { y: 0, opacity: 1, duration: 0.9 },
         1.2
       )
       .fromTo(
+        ctaRef.current,
+        { y: 24, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.8 },
+        1.4
+      )
+      .fromTo(
         noteRef.current,
         { opacity: 0 },
-        { opacity: 1, duration: 0.8 },
-        1.5
+        { opacity: 1, duration: 0.7 },
+        1.7
       );
 
     return () => tl.kill();
   }, []);
 
   return (
-    <section className="relative min-h-[100dvh] flex items-center justify-center overflow-hidden bg-vertex-black">
+    <section
+      id="top"
+      className="relative min-h-[100dvh] flex items-center justify-center overflow-hidden bg-vertex-black"
+    >
       {/* Aurora WebGL background */}
       <div className="absolute inset-0">
         <Aurora
@@ -70,8 +107,8 @@ export default function Hero() {
         />
       </div>
 
-      {/* Grain + vignette overlays */}
-      <div className="absolute inset-0 bg-gradient-to-b from-vertex-black/40 via-transparent to-vertex-black pointer-events-none" />
+      {/* Vignette overlays */}
+      <div className="absolute inset-0 bg-gradient-to-b from-vertex-black/30 via-transparent to-vertex-black pointer-events-none" />
       <div
         className="absolute inset-0 opacity-[0.04] pointer-events-none mix-blend-overlay"
         style={{
@@ -81,41 +118,37 @@ export default function Hero() {
       />
 
       {/* Content */}
-      <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center pt-28 pb-12">
+      <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center pt-28 pb-12">
         <p
           ref={eyebrowRef}
-          className="inline-flex items-center gap-3 text-vertex-gold uppercase text-xs md:text-sm tracking-[0.4em] font-semibold mb-10 opacity-0"
+          className="inline-flex items-center gap-3 text-vertex-gold uppercase text-[10px] sm:text-xs md:text-sm tracking-[0.35em] font-semibold mb-8 opacity-0"
         >
-          <span className="h-px w-8 bg-vertex-gold/60" />
+          <span className="h-px w-6 sm:w-8 bg-vertex-gold/60" />
           ESTRATÉGIA DIGITAL DE ALTO IMPACTO
-          <span className="h-px w-8 bg-vertex-gold/60" />
+          <span className="h-px w-6 sm:w-8 bg-vertex-gold/60" />
         </p>
 
-        <div className="mb-2 md:mb-3">
-          <TextPressure
-            text="Sua empresa não precisa"
-            minFontSize={28}
-            color="#F4F4F5"
-          />
-        </div>
-        <div className="mb-2 md:mb-3">
-          <TextPressure text="de mais um site." minFontSize={28} color="#F4F4F5" />
-        </div>
-        <div className="mb-2 md:mb-3">
-          <TextPressure text="Precisa de uma" minFontSize={28} color="#F4F4F5" />
-        </div>
-        <div className="mb-6">
-          <TextPressure
-            text="estratégia que vende."
-            minFontSize={28}
-            color="#C9A84C"
-            italic
-          />
-        </div>
+        <h1
+          ref={titleRef}
+          className="text-4xl sm:text-5xl md:text-7xl font-bold mb-8 leading-[1.1] tracking-tight text-white"
+        >
+          <span className="block mb-1 sm:mb-2">
+            <SplitWords text="Sua empresa não precisa" />
+          </span>
+          <span className="block mb-1 sm:mb-2">
+            <SplitWords text="de mais um site." />
+          </span>
+          <span className="block mb-1 sm:mb-2">
+            <SplitWords text="Precisa de uma" />
+          </span>
+          <span className="block italic text-vertex-gold">
+            <SplitWords text="estratégia que vende." />
+          </span>
+        </h1>
 
         <div
           ref={lineRef}
-          className="h-px w-32 mx-auto mb-8 bg-gradient-to-r from-transparent via-vertex-magenta to-transparent opacity-0 origin-center"
+          className="h-px w-24 mx-auto mb-8 bg-gradient-to-r from-transparent via-vertex-magenta to-transparent opacity-0 origin-center"
         />
 
         <p
