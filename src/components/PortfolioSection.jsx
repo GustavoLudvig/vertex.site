@@ -1,335 +1,442 @@
-import React, { useState, useRef } from 'react';
-import { motion } from 'framer-motion';
+import { useEffect, useRef, useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import TiltedCard from './TiltedCard';
 
-const projects = [
+const WA_NUMBER = '5548984941156';
+const wa = (msg) => `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(msg)}`;
+
+// Categorias por segmento — categorias vazias mostram placeholder
+const SEGMENTS = [
+  { id: 'todos', label: 'Todos' },
+  { id: 'perfumarias', label: 'Perfumarias' },
+  { id: 'restaurantes', label: 'Restaurantes' },
+  { id: 'lojas', label: 'Lojas de Roupas' },
+  { id: 'petshops', label: 'Petshops' },
+  { id: 'barbearias', label: 'Barbearias' },
+  { id: 'outros', label: 'Outros' },
+];
+
+const PROJECTS = [
   {
-    name: 'Cerqueira Imported',
-    type: 'iframe',
+    id: 'cerqueira',
+    segment: 'perfumarias',
+    title: 'Cerqueira Imported',
+    subtitle: 'Loja de importados premium',
+    description:
+      'Site desenvolvido do zero no VS Code — design exclusivo, carregamento ultrarrápido, SEO técnico e catálogo dinâmico.',
     url: 'https://www.cerqueiraimported.site',
-    displayUrl: 'cerqueiraimported.site',
-    category: 'E-commerce de Importados',
-    description: 'Loja de importados de luxo desenvolvida do zero no VS Code. Design premium, carregamento ultrarrápido e otimizado para conversão.',
-    tags: ['E-commerce', 'SEO Técnico', 'Conversão'],
-    stack: 'Vite · React · Tailwind · GSAP',
-    bullets: [
-      'Desenvolvido 100% no VS Code — código limpo e estratégico',
-      'Velocidade máxima no Google PageSpeed',
-      'Otimizado para ranquear no Google em SC',
-      'Layout exclusivo com foco em produtos premium',
-    ],
-    status: 'No ar',
+    type: 'iframe',
+    badge: 'NO AR',
+    badgeColor: 'gold',
+    waMessage: 'Olá! Vi o site da Cerqueira Imported no portfólio da Vertex e gostaria de algo parecido.',
   },
   {
-    name: 'Beefy',
+    id: 'beefy',
+    segment: 'restaurantes',
+    title: 'Beefy',
+    subtitle: 'Restaurante de cortes nobres',
+    description:
+      'Steakhouse premium em Florianópolis. Design cinematográfico, reservas integradas, identidade dark/wood.',
+    video: '/portfolio-beefy.mp4',
     type: 'video',
-    videoSrc: '/portfolio-beefy.mp4',
-    displayUrl: 'beefy.com.br',
-    category: 'Restaurante Premium',
-    description: 'Site para steakhouse de alto padrão. Hero cinematográfico com vídeo, showcase de cortes nobres, menu executivo dinâmico e eventos exclusivos.',
-    tags: ['Restaurante', 'Motion Design', 'Cinematográfico'],
-    stack: 'Vite · React · Tailwind · GSAP · Lenis',
-    bullets: [
-      'Animações cinematográficas com GSAP + ScrollTrigger',
-      'Smooth scroll cinematográfico (Lenis)',
-      'Galeria de cortes com showcase imersivo',
-      'Seção exclusiva "Domingo do Milho" para evento semanal',
-    ],
-    status: 'Em finalização',
+    badge: 'EM FINALIZAÇÃO',
+    badgeColor: 'magenta',
+    waMessage: 'Olá! Vi o projeto Beefy no portfólio da Vertex e gostaria de um site assim pro meu negócio.',
   },
   {
-    name: 'use.theresa',
+    id: 'theresa',
+    segment: 'lojas',
+    title: 'use.theresa',
+    subtitle: 'Loja de roupas femininas',
+    description:
+      'E-commerce feminino com curadoria de moda autoral. Catálogo visual forte, checkout fluido, integração Instagram.',
+    video: '/portfolio-theresa.mp4',
     type: 'video',
-    videoSrc: '/portfolio-theresa.mp4',
-    displayUrl: 'usetheresa.com.br',
-    category: 'Moda Feminina',
-    description: 'E-commerce de moda feminina com identidade forte e elegante. Showcase de coleção, manifesto da marca, promoções dinâmicas e localização inteligente das lojas.',
-    tags: ['Moda', 'Branding', 'Lookbook'],
-    stack: 'Vite · React · Tailwind · GSAP · Framer Motion',
-    bullets: [
-      'Letter-by-letter reveal no título principal',
-      'Showcase de coleção com efeito parallax',
-      'Vídeo lookbook imersivo em tela cheia',
-      'Localização inteligente (geolocalização do cliente)',
-    ],
-    status: 'Em finalização',
+    badge: 'EM FINALIZAÇÃO',
+    badgeColor: 'magenta',
+    waMessage: 'Olá! Vi o projeto use.theresa no portfólio da Vertex e gostaria de algo parecido.',
   },
 ];
 
-const BrowserChrome = ({ displayUrl, children, onClick }) => (
-  <div
-    className="rounded-xl overflow-hidden border border-[#C9A84C]/20 shadow-2xl shadow-black/60 bg-[#111] group"
-    onClick={onClick}
-  >
-    <div className="bg-[#1a1a1a] px-4 py-3 flex items-center gap-3">
-      <div className="flex gap-1.5">
-        <div className="w-3 h-3 rounded-full bg-red-500/70"></div>
-        <div className="w-3 h-3 rounded-full bg-yellow-500/70"></div>
-        <div className="w-3 h-3 rounded-full bg-green-500/70"></div>
-      </div>
-      <div className="flex-1 bg-[#0d0d0d] rounded-md px-3 py-1.5 flex items-center gap-2">
-        <svg className="w-3 h-3 text-green-400 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-          <path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd"/>
-        </svg>
-        <span className="text-[#B0B0B0] text-xs truncate">{displayUrl}</span>
-      </div>
+const Badge = ({ text, color = 'gold' }) => {
+  const colors = {
+    gold: 'bg-vertex-gold/15 border-vertex-gold/40 text-vertex-gold',
+    magenta: 'bg-vertex-magenta/15 border-vertex-magenta/40 text-vertex-magenta',
+  };
+  return (
+    <span
+      className={`inline-flex items-center gap-2 px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.18em] rounded-full border backdrop-blur-md ${colors[color]}`}
+    >
+      <span
+        className={`w-1.5 h-1.5 rounded-full ${
+          color === 'gold' ? 'bg-vertex-gold' : 'bg-vertex-magenta'
+        } animate-pulse`}
+      />
+      {text}
+    </span>
+  );
+};
+
+/* ---------- IframeMedia ---------- */
+function IframeMedia({ url }) {
+  const [loading, setLoading] = useState(true);
+  return (
+    <div className="relative w-full h-full bg-vertex-black">
+      {loading && (
+        <div className="absolute inset-0 flex items-center justify-center">
+          <div className="w-10 h-10 border-2 border-vertex-gold/30 border-t-vertex-gold rounded-full animate-spin" />
+        </div>
+      )}
+      <iframe
+        src={url}
+        title="preview"
+        className="absolute inset-0 w-full h-full"
+        onLoad={() => setLoading(false)}
+        loading="lazy"
+        scrolling="no"
+        style={{ pointerEvents: 'none' }}
+      />
     </div>
-    {children}
-  </div>
-);
+  );
+}
 
-const VideoMockup = ({ src, displayUrl, name, status }) => {
+/* ---------- VideoMedia (autoplay muted, hover unmuta) ---------- */
+function VideoMedia({ src, posterText }) {
   const videoRef = useRef(null);
-  const [playing, setPlaying] = useState(false);
+  const [muted, setMuted] = useState(true);
+  const [paused, setPaused] = useState(false);
+  const [available, setAvailable] = useState(true);
 
-  const handleMouseEnter = () => {
-    if (videoRef.current) {
-      videoRef.current.play();
-      setPlaying(true);
+  useEffect(() => {
+    const v = videoRef.current;
+    if (!v) return;
+    v.play().catch(() => {});
+  }, []);
+
+  const handleEnter = () => {
+    const v = videoRef.current;
+    if (!v) return;
+    v.muted = false;
+    v.volume = 0.6;
+    setMuted(false);
+  };
+
+  const handleLeave = () => {
+    const v = videoRef.current;
+    if (!v) return;
+    v.muted = true;
+    setMuted(true);
+  };
+
+  const togglePause = (e) => {
+    e.stopPropagation();
+    const v = videoRef.current;
+    if (!v) return;
+    if (v.paused) {
+      v.play();
+      setPaused(false);
+    } else {
+      v.pause();
+      setPaused(true);
     }
   };
 
-  return (
-    <BrowserChrome displayUrl={displayUrl}>
-      <div
-        className="relative bg-[#0d0d0d] overflow-hidden cursor-pointer"
-        style={{ aspectRatio: '16/10' }}
-        onMouseEnter={handleMouseEnter}
-      >
-        <video
-          ref={videoRef}
-          src={src}
-          muted
-          loop
-          playsInline
-          preload="metadata"
-          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-        />
-
-        {/* Play overlay (only when paused) */}
-        {!playing && (
-          <div className="absolute inset-0 flex items-center justify-center bg-black/30 backdrop-blur-[2px] transition-opacity duration-300">
-            <div className="w-16 h-16 rounded-full bg-[#C9A84C] flex items-center justify-center shadow-2xl shadow-[#C9A84C]/40">
-              <svg className="w-7 h-7 text-[#0a0a0a] ml-1" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M8 5v14l11-7z" />
-              </svg>
-            </div>
-          </div>
-        )}
-
-        {/* Status badge */}
-        <div className="absolute top-3 right-3 bg-black/70 backdrop-blur-md px-3 py-1 rounded-full border border-[#C9A84C]/30">
-          <span className="text-[10px] font-bold text-[#C9A84C] uppercase tracking-widest">{status}</span>
-        </div>
-
-        {/* Hover hint */}
-        {!playing && (
-          <div className="absolute bottom-3 left-3 bg-black/70 backdrop-blur-md px-3 py-1.5 rounded-full">
-            <span className="text-[11px] text-white/80">Passe o mouse para reproduzir</span>
-          </div>
-        )}
-      </div>
-    </BrowserChrome>
-  );
-};
-
-const IframeMockup = ({ url, displayUrl, name, status }) => {
-  const [loaded, setLoaded] = useState(false);
-  const [error, setError] = useState(false);
-
-  return (
-    <BrowserChrome displayUrl={displayUrl}>
-      <div className="relative bg-[#0d0d0d] overflow-hidden" style={{ aspectRatio: '16/10' }}>
-        {!loaded && !error && (
-          <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 z-10">
-            <div className="w-8 h-8 border-2 border-[#C9A84C] border-t-transparent rounded-full animate-spin"></div>
-            <span className="text-[#B0B0B0] text-sm">Carregando {name}…</span>
-          </div>
-        )}
-        {error && (
-          <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 px-8 text-center z-10">
-            <div className="w-16 h-16 rounded-full bg-[#C9A84C]/10 flex items-center justify-center">
-              <svg className="w-8 h-8 text-[#C9A84C]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9" />
-              </svg>
-            </div>
-            <p className="text-[#B0B0B0] text-sm">O site está protegido contra incorporação.<br />Clique abaixo para visitá-lo.</p>
-            <a
-              href={url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="btn-primary text-sm px-5 py-2"
-            >
-              Visitar {name} →
-            </a>
-          </div>
-        )}
-        <iframe
-          src={url}
-          title={name}
-          className={`w-full h-full border-0 transition-opacity duration-500 ${loaded && !error ? 'opacity-100' : 'opacity-0'}`}
-          onLoad={() => setLoaded(true)}
-          onError={() => setError(true)}
-          style={{ pointerEvents: 'none' }}
-        />
-
-        {/* Status badge */}
-        <div className="absolute top-3 right-3 bg-black/70 backdrop-blur-md px-3 py-1 rounded-full border border-[#C9A84C]/30 z-20">
-          <span className="text-[10px] font-bold text-[#C9A84C] uppercase tracking-widest">{status}</span>
+  if (!available) {
+    return (
+      <div className="relative w-full h-full bg-gradient-to-br from-vertex-black via-vertex-gold/5 to-vertex-magenta/5 flex items-center justify-center">
+        <div className="text-center px-6">
+          <p className="text-vertex-gold/80 text-xs uppercase tracking-[0.3em] mb-2">
+            Vídeo em produção
+          </p>
+          <p className="text-white/60 text-sm">{posterText}</p>
         </div>
       </div>
-    </BrowserChrome>
-  );
-};
-
-const ProjectCard = ({ project, index }) => {
-  const reverse = index % 2 === 1;
+    );
+  }
 
   return (
-    <motion.div
-      className={`grid lg:grid-cols-2 gap-10 items-center mb-24 ${reverse ? 'lg:[direction:rtl]' : ''}`}
-      initial={{ opacity: 0, y: 60 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.8, delay: 0.05 }}
-      viewport={{ once: true, margin: '-80px' }}
+    <div
+      className="relative w-full h-full bg-vertex-black overflow-hidden group/video"
+      onMouseEnter={handleEnter}
+      onMouseLeave={handleLeave}
     >
-      <div className="lg:[direction:ltr]">
-        {project.type === 'video' ? (
-          <VideoMockup
-            src={project.videoSrc}
-            displayUrl={project.displayUrl}
-            name={project.name}
-            status={project.status}
-          />
-        ) : (
-          <IframeMockup
-            url={project.url}
-            displayUrl={project.displayUrl}
-            name={project.name}
-            status={project.status}
-          />
-        )}
+      <video
+        ref={videoRef}
+        src={src}
+        className="absolute inset-0 w-full h-full object-cover"
+        muted
+        loop
+        playsInline
+        autoPlay
+        onError={() => setAvailable(false)}
+      />
+      <div className="absolute top-4 left-4 z-10">
+        <span className="inline-flex items-center gap-2 px-2.5 py-1 text-[10px] font-bold uppercase tracking-widest text-white/80 bg-black/40 backdrop-blur-md rounded">
+          <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />
+          LIVE
+        </span>
       </div>
+      <button
+        onClick={(e) => {
+          e.stopPropagation();
+          const v = videoRef.current;
+          if (!v) return;
+          v.muted = !v.muted;
+          setMuted(v.muted);
+        }}
+        className="absolute top-4 right-4 z-10 w-9 h-9 rounded-full bg-black/50 backdrop-blur-md border border-white/20 flex items-center justify-center text-white/80 hover:text-vertex-gold hover:border-vertex-gold transition-colors"
+        aria-label={muted ? 'Ativar som' : 'Silenciar'}
+      >
+        {muted ? (
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z" />
+          </svg>
+        ) : (
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z" />
+          </svg>
+        )}
+      </button>
+      <button
+        onClick={togglePause}
+        className="absolute bottom-4 right-4 z-10 w-9 h-9 rounded-full bg-black/50 backdrop-blur-md border border-white/20 flex items-center justify-center text-white/80 hover:text-vertex-gold hover:border-vertex-gold transition-colors opacity-0 group-hover/video:opacity-100"
+        aria-label={paused ? 'Continuar' : 'Pausar'}
+      >
+        {paused ? (
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M8 5v14l11-7z" />
+          </svg>
+        ) : (
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" />
+          </svg>
+        )}
+      </button>
+    </div>
+  );
+}
 
-      <div className="space-y-5 lg:[direction:ltr]">
-        <div className="flex items-center gap-3 text-xs uppercase tracking-widest font-bold">
-          <span className="text-[#C9A84C]">0{index + 1}</span>
-          <span className="w-8 h-px bg-[#C9A84C]/40"></span>
-          <span className="text-[#B0B0B0]">{project.category}</span>
+/* ---------- ProjectCard ---------- */
+function ProjectCard({ project, index }) {
+  return (
+    <motion.article
+      layout
+      initial={{ opacity: 0, y: 40 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: 20 }}
+      transition={{ duration: 0.6, delay: index * 0.08, ease: [0.22, 1, 0.36, 1] }}
+      className="group"
+    >
+      <TiltedCard maxTilt={8} scale={1.02} className="rounded-2xl">
+        <div className="relative aspect-video rounded-2xl overflow-hidden border border-white/10 bg-vertex-black shadow-2xl shadow-vertex-magenta/10">
+          <div className="absolute inset-0">
+            {project.type === 'iframe' ? (
+              <IframeMedia url={project.url} />
+            ) : (
+              <VideoMedia src={project.video} posterText={project.title} />
+            )}
+          </div>
+          <div className="absolute inset-0 bg-gradient-to-t from-vertex-black via-vertex-black/0 to-transparent pointer-events-none" />
+          <div className="absolute top-4 right-4 z-10 pointer-events-none">
+            <Badge text={project.badge} color={project.badgeColor} />
+          </div>
+          <div
+            className="absolute inset-0 rounded-2xl pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+            style={{
+              boxShadow:
+                '0 0 80px rgba(255,0,110,0.25), inset 0 0 60px rgba(201,168,76,0.08)',
+            }}
+          />
         </div>
+      </TiltedCard>
 
-        <h3 className="text-4xl lg:text-5xl font-bold text-white leading-tight">
-          {project.name}
-        </h3>
-
-        <div className="flex flex-wrap gap-2">
-          {project.tags.map((tag) => (
-            <span key={tag} className="text-xs font-semibold px-3 py-1 rounded-full border border-[#C9A84C]/40 text-[#C9A84C]">
-              {tag}
-            </span>
-          ))}
+      <div className="mt-6 px-2">
+        <div className="flex items-baseline gap-3 mb-2">
+          <h3 className="text-2xl md:text-3xl font-bold text-white tracking-tight">
+            {project.title}
+          </h3>
+          <span className="text-xs uppercase tracking-[0.2em] text-vertex-mute">
+            {project.subtitle}
+          </span>
         </div>
-
-        <p className="text-[#B0B0B0] text-lg leading-relaxed">{project.description}</p>
-
-        <ul className="space-y-3">
-          {project.bullets.map((item) => (
-            <li key={item} className="flex items-start gap-3">
-              <div className="w-5 h-5 bg-[#C9A84C] rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-                <svg className="w-3 h-3 text-[#0a0a0a]" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd"/>
-                </svg>
-              </div>
-              <span className="text-[#B0B0B0]">{item}</span>
-            </li>
-          ))}
-        </ul>
-
-        <div className="pt-2">
-          <p className="text-[11px] uppercase tracking-widest text-[#666] font-bold mb-1">Stack</p>
-          <p className="text-sm text-[#B0B0B0] font-mono">{project.stack}</p>
-        </div>
-
-        <div className="flex flex-col sm:flex-row gap-3 pt-3">
+        <p className="text-vertex-mute leading-relaxed mb-4 max-w-2xl">
+          {project.description}
+        </p>
+        <div className="flex flex-wrap items-center gap-5">
           {project.url && (
             <a
               href={project.url}
               target="_blank"
               rel="noopener noreferrer"
-              className="btn-primary text-center"
+              className="inline-flex items-center gap-2 text-vertex-gold text-sm font-semibold hover:text-vertex-magenta transition-colors group/link"
             >
-              Visitar site →
+              Ver site ao vivo
+              <svg
+                width="14"
+                height="14"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.5"
+                className="group-hover/link:translate-x-1 transition-transform"
+              >
+                <path d="M5 12h14M13 5l7 7-7 7" />
+              </svg>
             </a>
           )}
           <a
-            href={`https://wa.me/5548984941156?text=${encodeURIComponent(`Olá! Vi o projeto ${project.name} no portfólio da Vertex e quero um site assim.`)}`}
+            href={wa(project.waMessage)}
             target="_blank"
             rel="noopener noreferrer"
-            className="btn-whatsapp"
+            className="inline-flex items-center gap-2 text-white/80 text-sm font-semibold hover:text-white transition-colors"
           >
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" className="flex-shrink-0">
-              <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893A11.821 11.821 0 0020.885 3.488"/>
-            </svg>
-            Quero um assim
+            Quero algo assim →
           </a>
         </div>
       </div>
-    </motion.div>
+    </motion.article>
   );
-};
+}
 
-const PortfolioSection = () => {
+/* ---------- EmptyCategoryCard ---------- */
+function EmptyCategoryCard({ segment }) {
   return (
-    <section className="py-24 bg-[#0a0a0a] relative overflow-hidden" id="portfolio">
-      {/* Background gradient */}
-      <div className="absolute inset-0 bg-gradient-to-b from-[#0a0a0a] via-[#111] to-[#0a0a0a] pointer-events-none"></div>
-
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative">
-        <motion.div
-          className="text-center mb-20"
-          initial={{ opacity: 0, y: 40 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          viewport={{ once: true }}
+    <motion.article
+      initial={{ opacity: 0, y: 30 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+      className="relative aspect-video rounded-2xl overflow-hidden border-2 border-dashed border-vertex-gold/20 bg-gradient-to-br from-vertex-black via-vertex-gold/[0.03] to-vertex-magenta/[0.05] flex items-center justify-center p-8 group hover:border-vertex-gold/50 transition-colors"
+    >
+      <div className="text-center">
+        <div className="inline-flex items-center justify-center w-14 h-14 mb-4 rounded-full border border-vertex-gold/30 text-vertex-gold/60 group-hover:text-vertex-gold group-hover:scale-110 transition-all">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <path d="M12 5v14M5 12h14" />
+          </svg>
+        </div>
+        <p className="text-vertex-gold uppercase text-xs tracking-[0.3em] font-bold mb-2">
+          Sua marca aqui
+        </p>
+        <p className="text-white/60 text-sm max-w-xs mx-auto">
+          Próximo case em <span className="text-white font-semibold">{segment}</span>. Vai ser o seu?
+        </p>
+        <a
+          href={wa(`Olá! Quero ser o próximo case Vertex em ${segment}.`)}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-block mt-4 text-vertex-magenta text-xs uppercase tracking-widest font-bold hover:underline"
         >
-          <p className="section-label">PROVA REAL DO NOSSO TRABALHO</p>
-          <h2 className="section-title">
-            Sites que vendem — não só que <span className="text-[#C9A84C] italic">ficam bonitos</span>
+          Conversar agora →
+        </a>
+      </div>
+    </motion.article>
+  );
+}
+
+/* ---------- Section ---------- */
+export default function PortfolioSection() {
+  const [active, setActive] = useState('todos');
+
+  const filtered =
+    active === 'todos' ? PROJECTS : PROJECTS.filter((p) => p.segment === active);
+
+  const segmentLabel = SEGMENTS.find((s) => s.id === active)?.label || 'Todos';
+
+  return (
+    <section id="portfolio" className="relative py-24 md:py-32 bg-vertex-black overflow-hidden">
+      <div
+        className="absolute inset-0 pointer-events-none opacity-50"
+        style={{
+          backgroundImage:
+            'radial-gradient(circle at 20% 30%, rgba(255,0,110,0.08), transparent 50%), radial-gradient(circle at 80% 70%, rgba(201,168,76,0.06), transparent 50%)',
+        }}
+      />
+
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="text-center mb-16">
+          <p className="inline-flex items-center gap-3 text-vertex-gold uppercase text-xs tracking-[0.4em] font-bold mb-5">
+            <span className="h-px w-8 bg-vertex-gold/60" />
+            PORTFÓLIO REAL
+            <span className="h-px w-8 bg-vertex-gold/60" />
+          </p>
+          <h2 className="text-4xl md:text-6xl font-bold text-white tracking-tight mb-5 leading-tight">
+            Sites que <span className="italic text-vertex-gold">vendem</span> de verdade.
           </h2>
-          <p className="section-subtitle max-w-2xl mx-auto">
-            Cada projeto é construído do zero, personalizado para o negócio do cliente, com estratégia, velocidade e foco em resultados reais.
+          <p className="text-vertex-mute text-base md:text-lg max-w-2xl mx-auto">
+            Cada projeto é feito à mão, com estratégia e código limpo. Filtre pelo seu segmento e veja o padrão Vertex.
           </p>
-        </motion.div>
+        </div>
 
-        {projects.map((project, i) => (
-          <ProjectCard key={project.name} project={project} index={i} />
-        ))}
+        {/* Tabs */}
+        <div className="flex flex-wrap justify-center gap-2 mb-14">
+          {SEGMENTS.map((seg) => {
+            const isActive = active === seg.id;
+            const count =
+              seg.id === 'todos'
+                ? PROJECTS.length
+                : PROJECTS.filter((p) => p.segment === seg.id).length;
+            return (
+              <button
+                key={seg.id}
+                onClick={() => setActive(seg.id)}
+                className={`relative px-5 py-2.5 rounded-full text-sm font-semibold uppercase tracking-wider transition-all ${
+                  isActive ? 'text-vertex-black' : 'text-vertex-mute hover:text-white'
+                }`}
+              >
+                {isActive && (
+                  <motion.span
+                    layoutId="tabbg"
+                    className="absolute inset-0 rounded-full bg-vertex-gold"
+                    transition={{ type: 'spring', stiffness: 380, damping: 30 }}
+                  />
+                )}
+                <span className="relative flex items-center gap-2">
+                  {seg.label}
+                  <span
+                    className={`text-[10px] px-1.5 py-0.5 rounded-full ${
+                      isActive
+                        ? 'bg-vertex-black/20 text-vertex-black'
+                        : 'bg-white/5 text-vertex-mute'
+                    }`}
+                  >
+                    {count}
+                  </span>
+                </span>
+              </button>
+            );
+          })}
+        </div>
 
-        {/* CTA final do portfolio */}
-        <motion.div
-          className="text-center pt-8 border-t border-white/5"
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          viewport={{ once: true }}
-        >
-          <p className="text-[#B0B0B0] mb-6 text-lg">
-            Quer o seu negócio no próximo case da Vertex?
-          </p>
-          <a
-            href="https://wa.me/5548984941156?text=Ol%C3%A1!%20Quero%20um%20site%20assim%20para%20o%20meu%20neg%C3%B3cio."
-            target="_blank"
-            rel="noopener noreferrer"
-            className="btn-whatsapp inline-flex"
-          >
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" className="flex-shrink-0">
-              <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893A11.821 11.821 0 0020.885 3.488"/>
-            </svg>
-            Quero meu site agora
-          </a>
-        </motion.div>
+        {/* Grid */}
+        <div className="relative">
+          <AnimatePresence mode="wait">
+            {filtered.length > 0 ? (
+              <motion.div
+                key={active}
+                className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-14"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.3 }}
+              >
+                {filtered.map((p, i) => (
+                  <ProjectCard key={p.id} project={p} index={i} />
+                ))}
+              </motion.div>
+            ) : (
+              <motion.div
+                key={`empty-${active}`}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.4 }}
+                className="max-w-2xl mx-auto"
+              >
+                <EmptyCategoryCard segment={segmentLabel} />
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
       </div>
     </section>
   );
-};
-
-export default PortfolioSection;
+}
