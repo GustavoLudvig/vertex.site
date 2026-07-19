@@ -2,7 +2,6 @@ import { useEffect, useRef } from 'react';
 import gsap from 'gsap';
 import { Home, Stethoscope, PawPrint, Wrench } from 'lucide-react';
 import Aurora from './Aurora';
-import EncryptButton from './EncryptButton';
 
 const WA_NUMBER = '5548984941156';
 const WA_MESSAGE = encodeURIComponent(
@@ -165,14 +164,15 @@ export default function Hero() {
           ref={ctaRef}
           className="flex flex-col sm:flex-row gap-4 justify-center items-center opacity-0"
         >
-          <EncryptButton
-            text="Quero impulsionar meu negócio"
+          <a
             href={`https://wa.me/${WA_NUMBER}?text=${WA_MESSAGE}`}
             target="_blank"
             rel="noopener noreferrer"
-            icon={<WhatsAppIcon />}
-            variant="primary"
-          />
+            className="inline-flex items-center justify-center gap-3 px-8 py-4 rounded-full bg-[#25D366] text-white font-bold uppercase tracking-wider text-sm md:text-base hover:bg-[#20bd5a] transition-colors animate-pulse-green"
+          >
+            <WhatsAppIcon />
+            Quero impulsionar meu negócio
+          </a>
         </div>
 
         <p ref={noteRef} className="text-white/50 text-sm mt-6 opacity-0">

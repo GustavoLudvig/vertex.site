@@ -55,7 +55,7 @@ const CTASection = () => {
           href={`https://wa.me/${WA_NUMBER}?text=${WA_MESSAGE}`}
           target="_blank"
           rel="noopener noreferrer"
-          className="btn-whatsapp inline-flex mb-6 animate-pulse-glow"
+          className="btn-whatsapp inline-flex mb-6 animate-pulse-green"
           initial={{ opacity: 0, scale: 0.9 }}
           whileInView={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.6, delay: 0.4 }}

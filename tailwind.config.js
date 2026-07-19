@@ -25,6 +25,7 @@ module.exports = {
         'marquee-reverse': 'marquee-reverse 30s linear infinite',
         'shine': 'shine 3s linear infinite',
         'pulse-glow': 'pulse-glow 2.5s ease-in-out infinite',
+        'pulse-green': 'pulse-green 2s ease-in-out infinite',
         'float': 'float 6s ease-in-out infinite',
         'shimmer': 'shimmer 2.8s linear infinite',
         'spin-slow': 'spin 14s linear infinite',
@@ -53,6 +54,10 @@ module.exports = {
         'pulse-glow': {
           '0%, 100%': { boxShadow: '0 0 18px rgba(201, 168, 76, 0.3), 0 0 40px rgba(201, 168, 76, 0.12)' },
           '50%': { boxShadow: '0 0 30px rgba(201, 168, 76, 0.55), 0 0 65px rgba(201, 168, 76, 0.25)' },
+        },
+        'pulse-green': {
+          '0%, 100%': { boxShadow: '0 0 0 0 rgba(37, 211, 102, 0.45), 0 0 22px rgba(37, 211, 102, 0.35)' },
+          '50%': { boxShadow: '0 0 0 12px rgba(37, 211, 102, 0), 0 0 38px rgba(37, 211, 102, 0.55)' },
         },
       },
       backgroundImage: {
