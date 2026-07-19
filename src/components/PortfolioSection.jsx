@@ -268,20 +268,20 @@ function FeaturedPlaceholder({ segment }) {
 /* ---------------------------------------------------------------- */
 function StoryCard({ slot, index, segment }) {
   const videoRef = useRef(null);
-  const [muted, setMuted] = useState(true);
+  const [playing, setPlaying] = useState(false);
 
   const handleEnter = () => {
     const v = videoRef.current;
     if (!v) return;
     v.muted = false;
     v.volume = 0.5;
-    setMuted(false);
+    v.play().catch(() => {});
   };
   const handleLeave = () => {
     const v = videoRef.current;
     if (!v) return;
+    v.pause();
     v.muted = true;
-    setMuted(true);
   };
 
   /* Slot vazio — placeholder premium */
@@ -336,15 +336,29 @@ function StoryCard({ slot, index, segment }) {
           <video
             ref={videoRef}
             src={slot.video}
-            muted={muted}
+            muted
             loop
             playsInline
-            autoPlay
             preload="metadata"
+            onPlay={() => setPlaying(true)}
+            onPause={() => setPlaying(false)}
             className="absolute inset-0 w-full h-full object-cover"
           />
+          {/* Overlay "passe o mouse" enquanto pausado */}
+          <div
+            className={`absolute inset-0 z-10 flex flex-col items-center justify-center gap-2 bg-vertex-black/40 transition-opacity duration-300 pointer-events-none ${
+              playing ? 'opacity-0' : 'opacity-100'
+            }`}
+          >
+            <div className="w-12 h-12 rounded-full bg-vertex-gold/90 flex items-center justify-center">
+              <Play size={20} className="text-vertex-black ml-0.5" />
+            </div>
+            <span className="text-white/80 text-[9px] uppercase tracking-widest font-bold">
+              Passe o mouse
+            </span>
+          </div>
           <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-vertex-black/80 to-transparent pointer-events-none" />
-          <p className="absolute bottom-2.5 left-3 right-3 text-white text-xs font-semibold truncate">
+          <p className="absolute bottom-2.5 left-3 right-3 text-white text-xs font-semibold truncate z-10">
             {slot.label}
           </p>
         </div>
