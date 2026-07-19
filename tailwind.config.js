@@ -24,8 +24,19 @@ module.exports = {
         'marquee-reverse': 'marquee-reverse 30s linear infinite',
         'shine': 'shine 3s linear infinite',
         'pulse-glow': 'pulse-glow 2.5s ease-in-out infinite',
+        'float': 'float 6s ease-in-out infinite',
+        'shimmer': 'shimmer 2.8s linear infinite',
+        'spin-slow': 'spin 14s linear infinite',
       },
       keyframes: {
+        float: {
+          '0%, 100%': { transform: 'translateY(0)' },
+          '50%': { transform: 'translateY(-14px)' },
+        },
+        shimmer: {
+          '0%': { backgroundPosition: '-200% 0' },
+          '100%': { backgroundPosition: '200% 0' },
+        },
         marquee: {
           '0%': { transform: 'translateX(0)' },
           '100%': { transform: 'translateX(-50%)' },

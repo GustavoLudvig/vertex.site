@@ -124,7 +124,7 @@ export default function Hero() {
           className="inline-flex items-center gap-3 text-vertex-gold uppercase text-[10px] sm:text-xs md:text-sm tracking-[0.35em] font-semibold mb-8 opacity-0"
         >
           <span className="h-px w-6 sm:w-8 bg-vertex-gold/60" />
-          ESTRATÉGIA DIGITAL DE ALTO IMPACTO
+          VERTEX ESTRATÉGIA DIGITAL
           <span className="h-px w-6 sm:w-8 bg-vertex-gold/60" />
         </p>
 
@@ -133,16 +133,13 @@ export default function Hero() {
           className="text-4xl sm:text-5xl md:text-7xl font-bold mb-8 leading-[1.1] tracking-tight text-white"
         >
           <span className="block mb-1 sm:mb-2">
-            <SplitWords text="Sua empresa não precisa" />
+            <SplitWords text="Empresa profissional" />
           </span>
           <span className="block mb-1 sm:mb-2">
-            <SplitWords text="de mais um site." />
-          </span>
-          <span className="block mb-1 sm:mb-2">
-            <SplitWords text="Precisa de uma" />
+            <SplitWords text="em impulsionar" />
           </span>
           <span className="block italic text-vertex-gold">
-            <SplitWords text="estratégia que vende." />
+            <SplitWords text="negócios." />
           </span>
         </h1>
 
@@ -155,8 +152,9 @@ export default function Hero() {
           ref={subRef}
           className="text-vertex-mute text-base md:text-lg leading-relaxed mb-10 max-w-2xl mx-auto opacity-0"
         >
-          A Vertex cria sites, aplicativos e campanhas que trabalham 24h por dia para
-          atrair, converter e fidelizar os clientes certos pro seu negócio.
+          Hospedagens, clínicas, petshops, mecânicas e muito mais — a Vertex cria
+          vídeos, sites e campanhas que trabalham 24h por dia pra transformar o seu
+          negócio em referência no seu ramo.
         </p>
 
         <div
