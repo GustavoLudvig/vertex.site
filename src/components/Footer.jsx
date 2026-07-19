@@ -13,20 +13,20 @@ const Footer = () => {
               className="h-16 w-auto mx-auto md:mx-0 mb-4"
             />
             <p className="text-[#B0B0B0]">
-              Estratégia digital que transforma negócios.
+              Empresa profissional em impulsionar negócios.
             </p>
           </div>
 
           {/* Links */}
           <div className="text-center">
             <div className="space-x-6">
-              <a href="#services" className="text-[#FFFFFF] hover:text-[#C9A84C] transition-colors">
-                Serviços
+              <a href="#portfolio" className="text-[#FFFFFF] hover:text-[#C9A84C] transition-colors">
+                Segmentos
               </a>
-              <a href="#methodology" className="text-[#FFFFFF] hover:text-[#C9A84C] transition-colors">
-                Metodologia
+              <a href="#impulso" className="text-[#FFFFFF] hover:text-[#C9A84C] transition-colors">
+                O método
               </a>
-              <a href="#contact" className="text-[#FFFFFF] hover:text-[#C9A84C] transition-colors">
+              <a href="#cta" className="text-[#FFFFFF] hover:text-[#C9A84C] transition-colors">
                 Contato
               </a>
             </div>

@@ -6,7 +6,7 @@ import { Renderer, Program, Mesh, Color, Triangle } from 'ogl';
  * Inspirado no React Bits, adaptado pra Vertex.
  *
  * Props:
- *   colorStops: array de 3 cores hex/rgb (default: ouro, magenta, preto)
+ *   colorStops: array de 3 cores hex/rgb (default: ouro, ambar, preto)
  *   amplitude: amplitude das ondas (default 1.0)
  *   blend: blend entre cores (default 0.5)
  *   speed: velocidade da animação (default 0.5)
@@ -103,7 +103,7 @@ void main() {
 `;
 
 export default function Aurora({
-  colorStops = ['#C9A84C', '#FF006E', '#0a0a0a'],
+  colorStops = ['#C9A84C', '#8A6D2F', '#050505'],
   amplitude = 1.0,
   blend = 0.5,
   speed = 0.5,
@@ -162,17 +162,28 @@ export default function Aurora({
     window.addEventListener('resize', resize);
     resize();
 
-    let rafId;
+    let rafId = null;
     const start = performance.now();
     const update = () => {
       rafId = requestAnimationFrame(update);
       program.uniforms.uTime.value = ((performance.now() - start) / 1000) * speed;
       renderer.render({ scene: mesh });
     };
-    rafId = requestAnimationFrame(update);
+
+    // Só renderiza quando o container está visível — libera GPU pro resto da página
+    const io = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) {
+        if (rafId === null) rafId = requestAnimationFrame(update);
+      } else if (rafId !== null) {
+        cancelAnimationFrame(rafId);
+        rafId = null;
+      }
+    });
+    io.observe(ctn);
 
     return () => {
-      cancelAnimationFrame(rafId);
+      io.disconnect();
+      if (rafId !== null) cancelAnimationFrame(rafId);
       window.removeEventListener('resize', resize);
       if (ctn.contains(gl.canvas)) ctn.removeChild(gl.canvas);
       gl.getExtension('WEBGL_lose_context')?.loseContext();

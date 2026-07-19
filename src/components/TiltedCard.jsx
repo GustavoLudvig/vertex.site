@@ -15,7 +15,7 @@ export default function TiltedCard({
   children,
   maxTilt = 12,
   scale = 1.03,
-  glow = 'rgba(255, 0, 110, 0.35)',
+  glow = 'rgba(201, 168, 76, 0.35)',
   className = '',
 }) {
   const ref = useRef(null);

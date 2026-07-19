@@ -2,10 +2,9 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const NAV_LINKS = [
-  { href: '#portfolio', label: 'Portfólio' },
-  { href: '#services', label: 'Serviços' },
-  { href: '#methodology', label: 'Metodologia' },
-  { href: '#cta', label: 'Resultados' },
+  { href: '#portfolio', label: 'Segmentos' },
+  { href: '#impulso', label: 'Como impulsionamos' },
+  { href: '#cta', label: 'Começar agora' },
   { href: '#contact', label: 'Contato' },
 ];
 
@@ -65,7 +64,7 @@ export default function Header() {
                   className="relative text-white text-sm font-medium tracking-wide hover:text-vertex-gold transition-colors group"
                 >
                   {link.label}
-                  <span className="absolute -bottom-1 left-0 right-0 h-px bg-gradient-to-r from-vertex-gold to-vertex-magenta scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-300" />
+                  <span className="absolute -bottom-1 left-0 right-0 h-px bg-gradient-to-r from-vertex-gold to-vertex-gold-light scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-300" />
                 </a>
               ))}
             </nav>
@@ -122,7 +121,7 @@ export default function Header() {
               className="absolute inset-0 pointer-events-none opacity-60"
               style={{
                 backgroundImage:
-                  'radial-gradient(circle at 30% 20%, rgba(255,0,110,0.15), transparent 50%), radial-gradient(circle at 70% 80%, rgba(201,168,76,0.12), transparent 50%)',
+                  'radial-gradient(circle at 30% 20%, rgba(201,168,76,0.14), transparent 50%), radial-gradient(circle at 70% 80%, rgba(138,109,47,0.12), transparent 50%)',
               }}
             />
 

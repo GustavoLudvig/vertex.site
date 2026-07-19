@@ -8,10 +8,11 @@ module.exports = {
     extend: {
       colors: {
         vertex: {
-          black: '#0a0a0a',
+          black: '#050505',
+          coal: '#0d0d0d',
           gold: '#C9A84C',
-          magenta: '#FF006E',
-          'magenta-soft': '#FF3D8F',
+          'gold-light': '#E8CE7E',
+          amber: '#8A6D2F',
           ink: '#F4F4F5',
           mute: '#B0B0B0',
         },
@@ -50,13 +51,13 @@ module.exports = {
           '100%': { backgroundPosition: '-200% center' },
         },
         'pulse-glow': {
-          '0%, 100%': { boxShadow: '0 0 20px rgba(255, 0, 110, 0.35), 0 0 40px rgba(201, 168, 76, 0.15)' },
-          '50%': { boxShadow: '0 0 35px rgba(255, 0, 110, 0.6), 0 0 70px rgba(201, 168, 76, 0.3)' },
+          '0%, 100%': { boxShadow: '0 0 18px rgba(201, 168, 76, 0.3), 0 0 40px rgba(201, 168, 76, 0.12)' },
+          '50%': { boxShadow: '0 0 30px rgba(201, 168, 76, 0.55), 0 0 65px rgba(201, 168, 76, 0.25)' },
         },
       },
       backgroundImage: {
         'gold-shine': 'linear-gradient(90deg, transparent, #C9A84C 20%, #FFE08A 40%, #C9A84C 60%, transparent 80%)',
-        'magenta-gold': 'linear-gradient(135deg, #FF006E 0%, #C9A84C 100%)',
+        'gold-sheen': 'linear-gradient(135deg, #E8CE7E 0%, #C9A84C 45%, #8A6D2F 100%)',
       },
     },
   },

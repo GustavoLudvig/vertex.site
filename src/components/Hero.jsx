@@ -1,12 +1,20 @@
 import { useEffect, useRef } from 'react';
 import gsap from 'gsap';
+import { Home, Stethoscope, PawPrint, Wrench } from 'lucide-react';
 import Aurora from './Aurora';
 import EncryptButton from './EncryptButton';
 
 const WA_NUMBER = '5548984941156';
 const WA_MESSAGE = encodeURIComponent(
-  'Olá! Quero minha estratégia digital agora. Pode me ajudar?'
+  'Olá! Quero impulsionar meu negócio com a Vertex. Pode me ajudar?'
 );
+
+const SEGMENT_CHIPS = [
+  { id: 'hospedagens', label: 'Hospedagens', icon: Home },
+  { id: 'clinicas', label: 'Clínicas', icon: Stethoscope },
+  { id: 'petshops', label: 'Petshops', icon: PawPrint },
+  { id: 'mecanicas', label: 'Mecânicas', icon: Wrench },
+];
 
 const WhatsAppIcon = () => (
   <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" className="flex-shrink-0">
@@ -14,7 +22,7 @@ const WhatsAppIcon = () => (
   </svg>
 );
 
-// Divide texto em <span class="word"> + <span class="char"> pra animar letra por letra
+// Divide texto em palavras + chars pra animar letra por letra
 const SplitWords = ({ text, className = '' }) => {
   const words = text.split(' ');
   return (
@@ -40,54 +48,41 @@ const SplitWords = ({ text, className = '' }) => {
   );
 };
 
+// Pula pro portfólio já com o segmento certo aberto
+const goToSegment = (id) => {
+  window.dispatchEvent(new CustomEvent('vertex:segment', { detail: id }));
+  document.getElementById('portfolio')?.scrollIntoView({ behavior: 'smooth' });
+};
+
 export default function Hero() {
   const eyebrowRef = useRef(null);
   const titleRef = useRef(null);
   const subRef = useRef(null);
+  const chipsRef = useRef(null);
   const ctaRef = useRef(null);
   const noteRef = useRef(null);
-  const lineRef = useRef(null);
 
   useEffect(() => {
     const chars = titleRef.current?.querySelectorAll('.char') || [];
+    const chips = chipsRef.current?.children || [];
     const tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
 
-    tl.fromTo(
-      eyebrowRef.current,
-      { y: 24, opacity: 0 },
-      { y: 0, opacity: 1, duration: 0.9 },
-      0.1
-    )
+    tl.fromTo(eyebrowRef.current, { y: 24, opacity: 0 }, { y: 0, opacity: 1, duration: 0.9 }, 0.1)
       .fromTo(
         chars,
-        { y: 120, opacity: 0 },
-        { y: 0, opacity: 1, duration: 1.1, stagger: 0.018 },
+        { y: 140, opacity: 0 },
+        { y: 0, opacity: 1, duration: 1.1, stagger: 0.03 },
         0.3
       )
+      .fromTo(subRef.current, { y: 30, opacity: 0 }, { y: 0, opacity: 1, duration: 0.9 }, 1.0)
       .fromTo(
-        lineRef.current,
-        { scaleX: 0, opacity: 0 },
-        { scaleX: 1, opacity: 1, duration: 1.0 },
-        1.1
-      )
-      .fromTo(
-        subRef.current,
-        { y: 30, opacity: 0 },
-        { y: 0, opacity: 1, duration: 0.9 },
-        1.2
-      )
-      .fromTo(
-        ctaRef.current,
+        chips,
         { y: 24, opacity: 0 },
-        { y: 0, opacity: 1, duration: 0.8 },
-        1.4
+        { y: 0, opacity: 1, duration: 0.7, stagger: 0.08 },
+        1.15
       )
-      .fromTo(
-        noteRef.current,
-        { opacity: 0 },
-        { opacity: 1, duration: 0.7 },
-        1.7
-      );
+      .fromTo(ctaRef.current, { y: 24, opacity: 0 }, { y: 0, opacity: 1, duration: 0.8 }, 1.5)
+      .fromTo(noteRef.current, { opacity: 0 }, { opacity: 1, duration: 0.7 }, 1.8);
 
     return () => tl.kill();
   }, []);
@@ -97,27 +92,26 @@ export default function Hero() {
       id="top"
       className="relative min-h-[100dvh] flex items-center justify-center overflow-hidden bg-vertex-black"
     >
-      {/* Aurora WebGL background */}
+      {/* Aurora WebGL — ouro sobre preto profundo */}
       <div className="absolute inset-0">
         <Aurora
-          colorStops={['#C9A84C', '#FF006E', '#0a0a0a']}
-          amplitude={1.2}
-          blend={0.55}
-          speed={0.6}
+          colorStops={['#C9A84C', '#8A6D2F', '#050505']}
+          amplitude={1.1}
+          blend={0.5}
+          speed={0.5}
         />
       </div>
 
-      {/* Vignette overlays */}
-      <div className="absolute inset-0 bg-gradient-to-b from-vertex-black/30 via-transparent to-vertex-black pointer-events-none" />
+      {/* Profundidade: vinheta + grain */}
+      <div className="absolute inset-0 bg-gradient-to-b from-vertex-black/40 via-transparent to-vertex-black pointer-events-none" />
       <div
-        className="absolute inset-0 opacity-[0.04] pointer-events-none mix-blend-overlay"
+        className="absolute inset-0 opacity-[0.05] pointer-events-none mix-blend-overlay"
         style={{
           backgroundImage:
             "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E\")",
         }}
       />
 
-      {/* Content */}
       <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center pt-28 pb-12">
         <p
           ref={eyebrowRef}
@@ -130,49 +124,54 @@ export default function Hero() {
 
         <h1
           ref={titleRef}
-          className="text-4xl sm:text-5xl md:text-7xl font-bold mb-8 leading-[1.1] tracking-tight text-white"
+          className="text-5xl sm:text-6xl md:text-8xl font-bold mb-6 leading-[1.05] tracking-tight text-white"
         >
           <span className="block mb-1 sm:mb-2">
-            <SplitWords text="Empresa profissional" />
-          </span>
-          <span className="block mb-1 sm:mb-2">
-            <SplitWords text="em impulsionar" />
+            <SplitWords text="Impulsionamos" />
           </span>
           <span className="block italic text-vertex-gold">
             <SplitWords text="negócios." />
           </span>
         </h1>
 
-        <div
-          ref={lineRef}
-          className="h-px w-24 mx-auto mb-8 bg-gradient-to-r from-transparent via-vertex-magenta to-transparent opacity-0 origin-center"
-        />
-
         <p
           ref={subRef}
-          className="text-vertex-mute text-base md:text-lg leading-relaxed mb-10 max-w-2xl mx-auto opacity-0"
+          className="text-vertex-mute text-base md:text-lg leading-relaxed mb-8 max-w-xl mx-auto opacity-0"
         >
-          Hospedagens, clínicas, petshops, mecânicas e muito mais — a Vertex cria
-          vídeos, sites e campanhas que trabalham 24h por dia pra transformar o seu
-          negócio em referência no seu ramo.
+          Vídeo, site e tráfego — o pacote completo pra sua empresa dominar o seu ramo.
         </p>
+
+        {/* Chips dos segmentos — pulam direto pra tab */}
+        <div
+          ref={chipsRef}
+          className="flex flex-wrap justify-center gap-2.5 md:gap-3 mb-10"
+        >
+          {SEGMENT_CHIPS.map((chip) => {
+            const Icon = chip.icon;
+            return (
+              <button
+                key={chip.id}
+                onClick={() => goToSegment(chip.id)}
+                className="inline-flex items-center gap-2 px-4 md:px-5 py-2.5 rounded-full border border-white/15 bg-white/[0.04] backdrop-blur-sm text-white/80 text-xs md:text-sm font-semibold uppercase tracking-wider hover:border-vertex-gold hover:text-vertex-gold hover:bg-vertex-gold/10 transition-colors opacity-0"
+              >
+                <Icon size={15} />
+                {chip.label}
+              </button>
+            );
+          })}
+        </div>
 
         <div
           ref={ctaRef}
           className="flex flex-col sm:flex-row gap-4 justify-center items-center opacity-0"
         >
           <EncryptButton
-            text="Quero minha estratégia agora"
+            text="Quero impulsionar meu negócio"
             href={`https://wa.me/${WA_NUMBER}?text=${WA_MESSAGE}`}
             target="_blank"
             rel="noopener noreferrer"
             icon={<WhatsAppIcon />}
             variant="primary"
-          />
-          <EncryptButton
-            text="Como funciona?"
-            href="#methodology"
-            variant="ghost"
           />
         </div>
 
@@ -183,9 +182,7 @@ export default function Hero() {
 
       {/* Scroll indicator */}
       <div className="absolute bottom-8 left-1/2 -translate-x-1/2 hidden md:flex flex-col items-center gap-2 opacity-60">
-        <span className="text-[10px] uppercase tracking-widest text-white/60">
-          Role
-        </span>
+        <span className="text-[10px] uppercase tracking-widest text-white/60">Role</span>
         <div className="w-px h-12 bg-gradient-to-b from-vertex-gold to-transparent" />
       </div>
     </section>

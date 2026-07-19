@@ -30,7 +30,7 @@ const SEGMENTS = [
     accent: '#C9A84C',
     tagline: 'Airbnb, pousadas e chalés que lotam a agenda',
     description:
-      'Vídeos cinematográficos e sites que transformam sua hospedagem em objeto de desejo. O hóspede vê, se imagina lá dentro e reserva.',
+      'O hóspede vê o vídeo, se imagina lá dentro e reserva.',
     featured: {
       video: '/hospedagens-principal.mp4',
       badge: 'CASE REAL',
@@ -44,10 +44,10 @@ const SEGMENTS = [
     id: 'clinicas',
     label: 'Clínicas',
     icon: Stethoscope,
-    accent: '#FF006E',
+    accent: '#C9A84C',
     tagline: 'Clínicas que transmitem confiança em segundos',
     description:
-      'Presença digital que passa autoridade médica: site impecável, vídeos profissionais e campanhas que enchem a agenda de consultas.',
+      'Autoridade em vídeo, site impecável e campanhas que enchem a agenda.',
     featured: null,
     slots: [null, null, null, null, null],
     waMessage:
@@ -60,7 +60,7 @@ const SEGMENTS = [
     accent: '#C9A84C',
     tagline: 'Petshops que viram a paixão do bairro',
     description:
-      'Conteúdo que emociona tutores e converte: vídeos dos peludos, site com agendamento e campanhas locais que trazem clientes novos toda semana.',
+      'Vídeos dos peludos que emocionam tutores e trazem clientes toda semana.',
     featured: null,
     slots: [null, null, null, null, null],
     waMessage:
@@ -70,10 +70,10 @@ const SEGMENTS = [
     id: 'mecanicas',
     label: 'Mecânicas',
     icon: Wrench,
-    accent: '#FF006E',
+    accent: '#C9A84C',
     tagline: 'Oficinas que passam profissionalismo de verdade',
     description:
-      'Saia da guerra de preço: vídeos que mostram a qualidade do seu serviço, site que gera orçamentos e anúncios que trazem carros pro pátio.',
+      'Vídeos que mostram a qualidade do serviço e anúncios que trazem carros pro pátio.',
     featured: null,
     slots: [null, null, null, null, null],
     waMessage:
@@ -132,24 +132,23 @@ function FeaturedVideo({ data, accent }) {
 
   return (
     <div ref={wrapRef} className="relative w-full max-w-[380px] mx-auto">
-      {/* Glow ambiente atrás do vídeo */}
+      {/* Glow estático — leve, não rouba GPU do vídeo */}
       <div
         aria-hidden
-        className="absolute -inset-8 rounded-[3rem] blur-3xl opacity-40 animate-pulse-glow pointer-events-none"
+        className="absolute -inset-6 rounded-[3rem] pointer-events-none opacity-50"
         style={{
-          background: `radial-gradient(ellipse at center, ${accent}55 0%, transparent 70%)`,
+          background: `radial-gradient(ellipse at center, ${accent}33 0%, transparent 70%)`,
         }}
       />
 
-      <TiltedCard maxTilt={7} scale={1.02} glow={`${accent}40`} className="rounded-[2rem]">
-        <div className="relative rounded-[2rem] overflow-hidden border border-white/10 bg-vertex-black shadow-2xl aspect-[9/16]">
+      <div className="relative rounded-[2rem] overflow-hidden border border-vertex-gold/25 bg-vertex-black shadow-[0_0_60px_rgba(201,168,76,0.18)] aspect-[9/16]">
           <video
             ref={videoRef}
             src={data.video}
             muted={muted}
             loop
             playsInline
-            preload="metadata"
+            preload="auto"
             className="absolute inset-0 w-full h-full object-cover"
           />
 
@@ -166,7 +165,7 @@ function FeaturedVideo({ data, accent }) {
             <button
               onClick={togglePlay}
               aria-label={playing ? 'Pausar vídeo' : 'Tocar vídeo'}
-              className="w-11 h-11 rounded-full bg-vertex-black/60 backdrop-blur-md border border-white/15 flex items-center justify-center text-white hover:bg-vertex-magenta hover:border-vertex-magenta transition-colors"
+              className="w-11 h-11 rounded-full bg-vertex-black/60 backdrop-blur-md border border-white/15 flex items-center justify-center text-white hover:bg-vertex-gold hover:border-vertex-gold hover:text-vertex-black transition-colors"
             >
               {playing ? <Pause size={18} /> : <Play size={18} className="ml-0.5" />}
             </button>
@@ -192,8 +191,7 @@ function FeaturedVideo({ data, accent }) {
               🔊 Toque para ouvir
             </button>
           )}
-        </div>
-      </TiltedCard>
+      </div>
     </div>
   );
 }
@@ -355,6 +353,15 @@ export default function PortfolioSection() {
   const segment = SEGMENTS.find((s) => s.id === active);
   const Icon = segment.icon;
 
+  // Chips do Hero pulam direto pra tab do segmento
+  useEffect(() => {
+    const onSegment = (e) => {
+      if (SEGMENTS.some((s) => s.id === e.detail)) setActive(e.detail);
+    };
+    window.addEventListener('vertex:segment', onSegment);
+    return () => window.removeEventListener('vertex:segment', onSegment);
+  }, []);
+
   return (
     <section
       id="portfolio"
@@ -374,7 +381,7 @@ export default function PortfolioSection() {
             WebkitMaskImage: 'linear-gradient(to top, black 30%, transparent 90%)',
           }}
         />
-        <div className="absolute -top-32 -left-32 w-96 h-96 rounded-full bg-vertex-magenta/10 blur-3xl" />
+        <div className="absolute -top-32 -left-32 w-96 h-96 rounded-full bg-vertex-gold/[0.07] blur-3xl" />
         <div className="absolute top-1/3 -right-32 w-96 h-96 rounded-full bg-vertex-gold/10 blur-3xl" />
       </div>
 
@@ -407,12 +414,12 @@ export default function PortfolioSection() {
           </p>
           <h2 className="text-4xl md:text-6xl font-bold text-white tracking-tight mb-4">
             Impulsionamos{' '}
-            <span className="italic text-transparent bg-clip-text bg-magenta-gold">
+            <span className="italic text-transparent bg-clip-text bg-gold-sheen">
               cada segmento.
             </span>
           </h2>
           <p className="text-vertex-mute text-base md:text-lg max-w-2xl mx-auto">
-            Cada ramo tem sua estratégia. Escolha o seu e veja o que a Vertex entrega.
+            Escolha o seu ramo. Veja com seus olhos.
           </p>
         </div>
 
@@ -434,7 +441,7 @@ export default function PortfolioSection() {
                 {isActive && (
                   <motion.span
                     layoutId="segment-pill"
-                    className="absolute inset-0 rounded-full bg-magenta-gold"
+                    className="absolute inset-0 rounded-full bg-gold-sheen"
                     transition={{ type: 'spring', stiffness: 380, damping: 32 }}
                   />
                 )}
@@ -483,7 +490,7 @@ export default function PortfolioSection() {
                   href={wa(segment.waMessage)}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-3 px-7 py-4 rounded-full bg-vertex-gold text-vertex-black text-sm font-bold uppercase tracking-wider hover:bg-vertex-magenta hover:text-white transition-colors animate-pulse-glow"
+                  className="inline-flex items-center gap-3 px-7 py-4 rounded-full bg-vertex-gold text-vertex-black text-sm font-bold uppercase tracking-wider hover:bg-vertex-gold-light transition-colors animate-pulse-glow"
                 >
                   Quero isso pro meu negócio
                   <ExternalLink size={16} />

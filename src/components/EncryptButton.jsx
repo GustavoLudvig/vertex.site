@@ -14,7 +14,7 @@ const CHARS = '!@#$%^&*():{};|,.<>/?ABCDEF0123456789';
  *   href:     URL (renderiza <a>)
  *   onClick:  handler (renderiza <button>)
  *   icon:     ReactNode antes do texto
- *   variant:  'primary' (magenta→ouro) | 'ghost' (borda ouro)
+ *   variant:  'primary' (ouro sólido) | 'ghost' (borda ouro)
  */
 export default function EncryptButton({
   text = 'Quero minha estratégia',
@@ -60,8 +60,8 @@ export default function EncryptButton({
 
   const variantClasses =
     variant === 'primary'
-      ? 'bg-vertex-gold text-vertex-black hover:bg-vertex-magenta hover:text-white animate-pulse-glow'
-      : 'bg-transparent border-2 border-vertex-gold text-vertex-gold hover:border-vertex-magenta hover:text-vertex-magenta';
+      ? 'bg-vertex-gold text-vertex-black hover:bg-vertex-gold-light animate-pulse-glow'
+      : 'bg-transparent border-2 border-vertex-gold text-vertex-gold hover:border-vertex-gold-light hover:text-vertex-gold-light';
 
   const Inner = (
     <motion.span
@@ -74,7 +74,7 @@ export default function EncryptButton({
       <span
         className={
           variant === 'primary'
-            ? 'absolute inset-0 -z-10 bg-gradient-to-r from-vertex-magenta via-vertex-gold to-vertex-magenta opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-[length:200%_100%] animate-shine'
+            ? 'absolute inset-0 -z-10 bg-gold-shine opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-[length:200%_100%] animate-shine'
             : ''
         }
       />
