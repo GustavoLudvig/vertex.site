@@ -59,7 +59,10 @@ const Footer = () => {
 
         <div className="border-t border-[#C9A84C]/20 mt-8 pt-8 text-center">
           <p className="text-[#B0B0B0] text-sm">
-            © 2025 Vertex Estratégia Digital. Todos os direitos reservados.
+            © 2026 Vertex Estratégia Digital. Todos os direitos reservados.
+          </p>
+          <p className="text-[#B0B0B0]/70 text-xs mt-2">
+            GUSTAVO SEARA LUDVIG · CNPJ 68.216.941/0001-09 · Florianópolis/SC
           </p>
         </div>
       </div>
